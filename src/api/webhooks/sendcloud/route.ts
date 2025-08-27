@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { SENDCLOUD_MODULE } from "../../../modules/sendcloud";
 import SendCloudModuleService from "../../../modules/sendcloud/services/sendcloud-module-service";
 

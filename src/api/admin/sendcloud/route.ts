@@ -1,7 +1,4 @@
-import type {
-  AuthenticatedMedusaRequest,
-  MedusaResponse,
-} from "@medusajs/framework";
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { SENDCLOUD_MODULE } from "../../../modules/sendcloud";
 import SendCloudModuleService from "../../../modules/sendcloud/services/sendcloud-module-service";
@@ -10,7 +7,7 @@ import { SendCloudParcel } from "../../../modules/sendcloud/services/sendcloud-a
 import type { AdminGetSendCloudParamsType, AdminCreateSendCloudShipmentType } from "./validators";
 
 export const GET = async (
-  req: AuthenticatedMedusaRequest<AdminGetSendCloudParamsType>,
+  req: MedusaRequest<AdminGetSendCloudParamsType>,
   res: MedusaResponse
 ) => {
   const sendCloudModuleService = req.scope.resolve<SendCloudModuleService>(SENDCLOUD_MODULE);
@@ -35,7 +32,7 @@ export const GET = async (
 };
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest<AdminCreateSendCloudShipmentType>,
+  req: MedusaRequest<AdminCreateSendCloudShipmentType>,
   res: MedusaResponse
 ) => {
   const { order_id, parcel_data } = req.validatedBody;

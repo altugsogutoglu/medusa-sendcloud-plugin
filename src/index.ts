@@ -16,22 +16,21 @@ export interface SendCloudPluginOptions {
 
 export default (options: SendCloudPluginOptions) => ({
   modules: [
+    SendCloudModule,
+  ],
+  links: [orderSendCloudShipmentLink],
+  fulfillmentProviders: [
     {
-      resolve: "./modules/sendcloud",
+      resolve: SendCloudFulfillmentProvider,
+      id: "sendcloud-fulfillment",
       options: {
-        publicKey: options.publicKey,
-        secretKey: options.secretKey,
-        webhookSecret: options.webhookSecret,
-        defaultParcelId: options.defaultParcelId,
-        defaultShippingMethodId: options.defaultShippingMethodId,
-        defaultServicePointId: options.defaultServicePointId,
-        defaultFromCountry: options.defaultFromCountry || "NL",
-        defaultFromPostalCode: options.defaultFromPostalCode || "1000AA",
+        apiKey: options.publicKey,
+        apiSecret: options.secretKey,
+        baseUrl: "https://panel.sendcloud.sc/api/v2",
+        partnerId: options.defaultParcelId?.toString(),
       },
     },
   ],
-  links: [orderSendCloudShipmentLink],
-  fulfillmentProviders: [SendCloudFulfillmentProvider],
 });
 
 export { SENDCLOUD_MODULE, SendCloudModule };

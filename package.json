@@ -1,7 +1,7 @@
 {
   "name": "medusa-sendcloud-plugin",
   "version": "0.0.1",
-  "description": "SendCloud integration plugin for Medusa v2.9",
+  "description": "SendCloud integration plugin for Medusa v2.9.0",
   "author": "Altug Sogutoglu <altugsogutoglu@github.com>",
   "license": "MIT",
   "repository": {
@@ -41,16 +41,17 @@
     "prepublishOnly": "medusa plugin:build"
   },
   "dependencies": {
-    "axios": "^1.7.9"
+    "axios": "^1.6.0",
+    "zod": "3.25.76"
   },
   "devDependencies": {
-    "@medusajs/admin-sdk": "2.4.0",
-    "@medusajs/cli": "2.4.0",
-    "@medusajs/framework": "2.4.0",
-    "@medusajs/icons": "2.4.0",
-    "@medusajs/medusa": "2.4.0",
-    "@medusajs/test-utils": "2.4.0",
-    "@medusajs/ui": "4.0.4",
+    "@medusajs/admin-sdk": "2.9.0",
+    "@medusajs/cli": "2.9.0",
+    "@medusajs/framework": "2.9.0",
+    "@medusajs/icons": "2.9.0",
+    "@medusajs/medusa": "2.9.0",
+    "@medusajs/test-utils": "2.9.0",
+    "@medusajs/ui": "4.0.14",
     "@mikro-orm/cli": "6.4.3",
     "@mikro-orm/core": "6.4.3",
     "@mikro-orm/knex": "6.4.3",
@@ -61,7 +62,7 @@
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.2.25",
     "awilix": "^8.0.1",
-    "axios": "^1.7.9",
+    "axios": "^1.6.0",
     "pg": "^8.13.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -72,13 +73,13 @@
     "yalc": "^1.0.0-pre.53"
   },
   "peerDependencies": {
-    "@medusajs/admin-sdk": "2.4.0",
-    "@medusajs/cli": "2.4.0",
-    "@medusajs/framework": "2.4.0",
-    "@medusajs/icons": "2.4.0",
-    "@medusajs/medusa": "2.4.0",
-    "@medusajs/test-utils": "2.4.0",
-    "@medusajs/ui": "4.0.3",
+    "@medusajs/admin-sdk": "2.9.0",
+    "@medusajs/cli": "2.9.0",
+    "@medusajs/framework": "2.9.0",
+    "@medusajs/icons": "2.9.0",
+    "@medusajs/medusa": "2.9.0",
+    "@medusajs/test-utils": "2.9.0",
+    "@medusajs/ui": "4.0.14",
     "@mikro-orm/cli": "6.4.3",
     "@mikro-orm/core": "6.4.3",
     "@mikro-orm/knex": "6.4.3",
@@ -89,5 +90,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "resolutions": {
+    "zod": "3.25.76"
   }
 }

@@ -1,6 +1,13 @@
 # SendCloud Plugin for Medusa v2.9
 
-A comprehensive SendCloud integration plugin for MedusaJS v2.9 that provides shipping and fulfillment capabilities.
+A comprehensive SendCloud integration plugin for MedusaJS v2.9.0 that provides shipping and fulfillment capabilities.
+
+## Compatibility
+
+- **Medusa v2.9.0+**: Fully compatible
+- **Medusa v2.8.x and below**: Not supported
+- **Node.js**: v20+ required
+- **TypeScript**: v5.6+ recommended
 
 ## Features
 
@@ -9,6 +16,9 @@ A comprehensive SendCloud integration plugin for MedusaJS v2.9 that provides shi
 - Webhook handling for tracking updates
 - Admin UI for shipment management
 - Automated shipping workflows
+- Full Medusa v2.9.0 compatibility with latest framework patterns
+- Enhanced type safety with Zod validation
+- Streamlined plugin architecture without loaders
 
 ## Installation
 
@@ -40,10 +50,20 @@ In your `medusa-config.ts`:
 import { loadEnv, defineConfig, Modules } from "@medusajs/framework/utils"
 
 module.exports = defineConfig({
-  // ... other config
+  projectConfig: {
+    databaseUrl: process.env.DATABASE_URL,
+    http: {
+      storeCors: process.env.STORE_CORS,
+      adminCors: process.env.ADMIN_CORS,
+      authCors: process.env.AUTH_CORS,
+      jwtSecret: process.env.JWT_SECRET || "supersecret",
+      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
+    },
+  },
   plugins: [
     {
       resolve: "../sendcloud-medusa", // Path to your local plugin
+      // Or use: resolve: "medusa-sendcloud-plugin", // After publishing to npm
       options: {
         publicKey: process.env.SENDCLOUD_API_KEY,
         secretKey: process.env.SENDCLOUD_API_SECRET,
@@ -56,24 +76,8 @@ module.exports = defineConfig({
     },
   ],
   modules: {
-    // Remove the old SendCloud module configuration
-    // Keep other modules as-is
-    
-    [Modules.FULFILLMENT]: {
-      resolve: "@medusajs/medusa/fulfillment",
-      options: {
-        providers: [
-          {
-            resolve: "medusa-sendcloud-plugin/providers/sendcloud-fulfillment",
-            id: "sendcloud-fulfillment",
-            options: {
-              apiKey: process.env.SENDCLOUD_API_KEY,
-              apiSecret: process.env.SENDCLOUD_API_SECRET,
-            },
-          },
-        ],
-      },
-    },
+    // The plugin automatically registers the SendCloud module and fulfillment provider
+    // No additional module configuration needed
   },
 });
 ```
