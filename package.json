@@ -1,7 +1,8 @@
 {
-  "name": "medusa-sendcloud-plugin",
+  "name": "@medita/medusa-sendcloud-plugin",
   "version": "0.0.1",
   "description": "SendCloud integration plugin for Medusa v2.9.0",
+  "main": ".medusa/server/src/index.js",
   "author": "Altug Sogutoglu <altugsogutoglu@github.com>",
   "license": "MIT",
   "repository": {
@@ -22,7 +23,11 @@
     "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
     "./modules/*": "./.medusa/server/src/modules/*/index.js",
     "./providers/*": "./.medusa/server/src/providers/*/index.js",
-    "./admin": "./.medusa/server/src/admin/index.js",
+    "./admin": {
+      "import": "./.medusa/server/src/admin/index.mjs",
+      "require": "./.medusa/server/src/admin/index.js",
+      "default": "./.medusa/server/src/admin/index.js"
+    },
     "./*": "./.medusa/server/src/*.js"
   },
   "keywords": [
@@ -37,11 +42,12 @@
   ],
   "scripts": {
     "build": "medusa plugin:build",
-    "dev": "medusa plugin:develop",
-    "prepublishOnly": "medusa plugin:build"
+    "dev": "medusa plugin:develop"
   },
   "dependencies": {
+    "@types/dotenv": "^8.2.3",
     "axios": "^1.6.0",
+    "dotenv": "^17.2.1",
     "zod": "3.25.76"
   },
   "devDependencies": {

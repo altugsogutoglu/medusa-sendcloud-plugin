@@ -10,9 +10,18 @@ export const GET = async (
   req: MedusaRequest<AdminGetSendCloudParamsType>,
   res: MedusaResponse
 ) => {
+  console.log("🔥 [API UPDATED] GET /admin/sendcloud called");
+  console.log("req.queryConfig:", req.queryConfig);
+  console.log("req.filterableFields:", req.filterableFields);
+  
   const sendCloudModuleService = req.scope.resolve<SendCloudModuleService>(SENDCLOUD_MODULE);
 
-  const { fields, pagination } = req.queryConfig;
+  // Handle case where queryConfig might be undefined
+  const fields = req.queryConfig?.fields;
+  const pagination = req.queryConfig?.pagination || { skip: 0, take: 20 };
+  
+  console.log("fields:", fields);
+  console.log("pagination:", pagination);
   
   const shipments = await sendCloudModuleService.listShipments(
     req.filterableFields || {},
@@ -23,12 +32,18 @@ export const GET = async (
     }
   );
 
-  res.json({
+  console.log("shipments found:", shipments.length);
+  console.log("shipments data:", shipments);
+
+  const response = {
     shipments,
     count: shipments.length,
     offset: pagination.skip,
     limit: pagination.take,
-  });
+  };
+  
+  console.log("API response:", response);
+  res.json(response);
 };
 
 export const POST = async (

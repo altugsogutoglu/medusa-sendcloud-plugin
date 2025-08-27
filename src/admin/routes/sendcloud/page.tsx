@@ -41,6 +41,7 @@ interface SendCloudResponse {
 }
 
 const SendCloudShipments = () => {
+  console.log("🚀 [UPDATED] SendCloudShipments component loaded from page.tsx");
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const pageSize = 20;

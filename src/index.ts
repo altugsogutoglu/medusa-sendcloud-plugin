@@ -6,12 +6,8 @@ import SendCloudFulfillmentProvider from "./modules/sendcloud/providers/sendclou
 export interface SendCloudPluginOptions {
   publicKey: string;
   secretKey: string;
-  webhookSecret?: string;
-  defaultParcelId?: number;
-  defaultShippingMethodId?: number;
-  defaultServicePointId?: number;
-  defaultFromCountry?: string;
-  defaultFromPostalCode?: string;
+  baseUrl: string;
+  partnerId: string;
 }
 
 export default (options: SendCloudPluginOptions) => ({
@@ -26,8 +22,8 @@ export default (options: SendCloudPluginOptions) => ({
       options: {
         apiKey: options.publicKey,
         apiSecret: options.secretKey,
-        baseUrl: "https://panel.sendcloud.sc/api/v2",
-        partnerId: options.defaultParcelId?.toString(),
+        baseUrl: options.baseUrl,
+        partnerId: options.partnerId,
       },
     },
   ],

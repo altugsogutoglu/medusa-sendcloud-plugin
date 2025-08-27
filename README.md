@@ -67,11 +67,8 @@ module.exports = defineConfig({
       options: {
         publicKey: process.env.SENDCLOUD_API_KEY,
         secretKey: process.env.SENDCLOUD_API_SECRET,
-        webhookSecret: process.env.SENDCLOUD_WEBHOOK_SECRET,
-        defaultParcelId: 1,
-        defaultShippingMethodId: 8,
-        defaultFromCountry: "NL",
-        defaultFromPostalCode: "1000AA",
+        baseUrl: process.env.SENDCLOUD_BASE_URL,
+        partnerId: process.env.SENDCLOUD_PARTNER_ID,
       },
     },
   ],
@@ -89,7 +86,6 @@ Add these to your `.env` file:
 ```bash
 SENDCLOUD_API_KEY=your_api_key
 SENDCLOUD_API_SECRET=your_api_secret
-SENDCLOUD_WEBHOOK_SECRET=your_webhook_secret
 SENDCLOUD_BASE_URL=https://panel.sendcloud.sc/api/v2
 SENDCLOUD_PARTNER_ID=your_partner_id
 ```
