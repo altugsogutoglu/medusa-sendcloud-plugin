@@ -10,10 +10,6 @@ export interface SendCloudPluginOptions {
 }
 
 export default (options: SendCloudPluginOptions) => {
-  // Use console.log for plugin initialization as logger isn't available yet
-  console.log("🔥 [PLUGIN INDEX] Plugin initialization called");
-  console.log("🔥 [PLUGIN INDEX] Options:", JSON.stringify(options));
-  console.log("🔥 [PLUGIN INDEX] SendCloudModule:", SendCloudModule);
   
   // Plugins in Medusa v2 don't register fulfillment providers directly
   // The consuming application must configure the Fulfillment Module
@@ -24,7 +20,6 @@ export default (options: SendCloudPluginOptions) => {
     links: [orderSendCloudShipmentLink],
   };
   
-  console.log("🔥 [PLUGIN INDEX] Config being returned:", JSON.stringify(config, null, 2));
   return config;
 };
 

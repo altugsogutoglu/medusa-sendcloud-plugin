@@ -26,10 +26,6 @@ type InjectedDependencies = {
 class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   static identifier = "sendcloud-fulfillment";
   
-  // Add static block to log when class is loaded
-  static {
-    console.log("🌟 [STATIC] SendCloudFulfillmentProvider class loaded with identifier:", this.identifier);
-  }
   
   protected logger_: Logger;
   protected options_: SendCloudFulfillmentOptions;
@@ -38,9 +34,6 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   constructor({ logger }: InjectedDependencies, options: SendCloudFulfillmentOptions) {
     super();
     
-    console.log("🚀🚀🚀 [CONSTRUCTOR] SendCloud provider constructor called!");
-    console.log("🚀🚀🚀 [CONSTRUCTOR] Logger exists:", !!logger);
-    console.log("🚀🚀🚀 [CONSTRUCTOR] Options:", JSON.stringify(options, null, 2));
     
     this.logger_ = logger;
     this.options_ = options;
@@ -57,7 +50,6 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
         partnerId: options.partnerId,
       }, this.logger_);
       
-      console.log("🚀🚀🚀 [CONSTRUCTOR] API service initialized successfully");
       this.logger_.info("SendCloud Fulfillment Provider initialized successfully");
     } catch (error) {
       console.error("🚀🚀🚀 [CONSTRUCTOR] Error initializing API service:", error);
@@ -67,18 +59,11 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   }
 
   async getFulfillmentOptions(): Promise<FulfillmentOption[]> {
-    console.log("🔥 [getFulfillmentOptions] Called");
-    this.logger_.info("🔥 [getFulfillmentOptions] Called via logger");
     try {
-      console.log("🔥 [getFulfillmentOptions] Fetching shipping methods from SendCloud...");
-      this.logger_.info("🔥 [getFulfillmentOptions] Fetching shipping methods from SendCloud...");
       const shippingMethods = await this.sendCloudApi_.getShippingMethods();
       // Log basic info about the response without full details
-      console.log("🔥 [getFulfillmentOptions] Shipping methods keys:", Object.keys(shippingMethods || {}));
-      console.log("🔥 [getFulfillmentOptions] Shipping methods array length:", shippingMethods?.shipping_methods?.length);
       
       if (!shippingMethods || !shippingMethods.shipping_methods) {
-        console.log("🔥 [getFulfillmentOptions] No shipping methods found in response");
         return [];
       }
       
@@ -95,13 +80,9 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
         name: option.name,
         carrier: option.carrier
       }));
-      console.log("🔥 [getFulfillmentOptions] Summary (first 3):", JSON.stringify(summary, null, 2));
-      console.log(`🔥 [getFulfillmentOptions] Total: ${options.length} shipping methods`);
-      this.logger_.info("🔥 [getFulfillmentOptions] Mapped options count: " + options.length);
       return options;
     } catch (error) {
-      console.error("🔥 [getFulfillmentOptions] ERROR:", error);
-      this.logger_.error("🔥 [getFulfillmentOptions] ERROR: " + error);
+      this.logger_.error("Failed to get fulfillment options:", error);
       throw new MedusaError(
         MedusaError.Types.UNEXPECTED_STATE,
         "Failed to retrieve shipping options from SendCloud"
@@ -110,17 +91,14 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   }
 
   async validateOption(data: Record<string, unknown>): Promise<boolean> {
-    console.log("🔥 [validateOption] Called with data:", data);
-    this.logger_.info("🔥 [validateOption] Called");
     try {
       const shippingMethods = await this.sendCloudApi_.getShippingMethods();
       const isValid = shippingMethods.shipping_methods?.some(
         (method: any) => method.id == data.id
       );
-      console.log("🔥 [validateOption] Result:", isValid);
       return Boolean(isValid);
     } catch (error: any) {
-      console.error("🔥 [validateOption] ERROR:", error);
+      this.logger_.error("Failed to validate option:", error);
       this.logger_.error("Failed to validate SendCloud shipping option: " + JSON.stringify({ 
         message: error?.message,
         data 
