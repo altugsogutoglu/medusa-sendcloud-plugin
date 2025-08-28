@@ -16,6 +16,7 @@ interface SendCloudFulfillmentOptions {
   apiSecret: string;
   baseUrl?: string;
   partnerId?: string;
+  defaultCountry?: string;
 }
 
 type InjectedDependencies = {
@@ -164,7 +165,7 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
             title: product?.title || 'Product',
           },
           hs_code: product?.hs_code || '',
-          origin_country: product?.origin_country || 'NL',
+          origin_country: product?.origin_country || this.options_.defaultCountry || 'NL',
           product_id: product?.id || '',
           quantity: item.quantity || 1,
           value: (item.unit_price || 0) / 100, // Convert from cents
@@ -188,7 +189,7 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
         house_number: shippingAddress.address_2 || '1',
         city: shippingAddress.city || '',
         postal_code: shippingAddress.postal_code || '',
-        country: shippingAddress.country_code?.toUpperCase() || 'NL',
+        country: shippingAddress.country_code?.toUpperCase() || this.options_.defaultCountry?.toUpperCase() || 'NL',
         email: order.email,
         telephone: order.billing_address?.phone || shippingAddress.phone,
         weight: parcelItems.reduce((total, item) => total + (item.weight * (item.quantity || 1)), 0),
@@ -506,7 +507,7 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
           from_address_2: shippingAddress.address_2,
           from_city: shippingAddress.city,
           from_company_name: `${shippingAddress.first_name} ${shippingAddress.last_name}`,
-          from_country: shippingAddress.country_code?.toUpperCase() || 'NL',
+          from_country: shippingAddress.country_code?.toUpperCase() || this.options_.defaultCountry?.toUpperCase() || 'NL',
           from_email: returnOrder.email,
           from_house_number: shippingAddress.address_2 || '1',
           from_country_state: shippingAddress.province,

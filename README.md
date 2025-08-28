@@ -42,7 +42,7 @@ yarn dev
 
 ## Configuration
 
-### Using as a Local Plugin
+### Using as a Module Provider (Recommended)
 
 In your `medusa-config.ts`:
 
@@ -60,23 +60,46 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
-  plugins: [
-    {
-      resolve: "../sendcloud-medusa", // Path to your local plugin
-      // Or use: resolve: "medusa-sendcloud-plugin", // After publishing to npm
+  modules: {
+    [Modules.FULFILLMENT]: {
+      resolve: "@medusajs/medusa/fulfillment",
       options: {
-        publicKey: process.env.SENDCLOUD_API_KEY,
-        secretKey: process.env.SENDCLOUD_API_SECRET,
-        baseUrl: process.env.SENDCLOUD_BASE_URL,
-        partnerId: process.env.SENDCLOUD_PARTNER_ID,
+        providers: [
+          {
+            resolve: "@medita/medusa-sendcloud-plugin/providers/sendcloud-fulfillment",
+            id: "sendcloud-fulfillment",
+            options: {
+              apiKey: process.env.SENDCLOUD_API_KEY,
+              apiSecret: process.env.SENDCLOUD_API_SECRET,
+              baseUrl: process.env.SENDCLOUD_BASE_URL,
+              partnerId: process.env.SENDCLOUD_PARTNER_ID,
+              defaultCountry: process.env.SENDCLOUD_DEFAULT_COUNTRY || 'NL',
+            },
+          },
+        ],
       },
     },
-  ],
-  modules: {
-    // The plugin automatically registers the SendCloud module and fulfillment provider
-    // No additional module configuration needed
   },
 });
+```
+
+### Alternative: Using as a Plugin
+
+You can also register it as a plugin (includes additional features like webhooks and admin APIs):
+
+```typescript
+plugins: [
+  {
+    resolve: "@medita/medusa-sendcloud-plugin",
+    options: {
+      apiKey: process.env.SENDCLOUD_API_KEY,
+      apiSecret: process.env.SENDCLOUD_API_SECRET,
+      baseUrl: process.env.SENDCLOUD_BASE_URL,
+      partnerId: process.env.SENDCLOUD_PARTNER_ID,
+      defaultCountry: process.env.SENDCLOUD_DEFAULT_COUNTRY || 'NL',
+    },
+  },
+],
 ```
 
 ### Environment Variables
@@ -88,7 +111,25 @@ SENDCLOUD_API_KEY=your_api_key
 SENDCLOUD_API_SECRET=your_api_secret
 SENDCLOUD_BASE_URL=https://panel.sendcloud.sc/api/v2
 SENDCLOUD_PARTNER_ID=your_partner_id
+SENDCLOUD_DEFAULT_COUNTRY=NL  # Optional: Default country code (ISO 2-letter format)
 ```
+
+### Configuration Options
+
+| Option | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| `apiKey` | string | ✅ | - | Your SendCloud API public key |
+| `apiSecret` | string | ✅ | - | Your SendCloud API secret key |
+| `baseUrl` | string | ❌ | `https://panel.sendcloud.sc/api/v2` | SendCloud API base URL |
+| `partnerId` | string | ❌ | - | Your SendCloud partner ID (if applicable) |
+| `defaultCountry` | string | ❌ | `NL` | Default country code for shipments (ISO 2-letter format) |
+
+**Note on `defaultCountry`**: This is used as a fallback when:
+- Product origin country is not specified (affects customs declarations)
+- Sender address country is missing
+- Return shipment origin country is not available
+
+Common values: `NL` (Netherlands), `DE` (Germany), `FR` (France), `BE` (Belgium), etc.
 
 ## API Routes
 
