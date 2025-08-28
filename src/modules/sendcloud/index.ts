@@ -10,4 +10,3 @@ export default Module(SENDCLOUD_MODULE, {
 
 export { SendCloudShipment } from "./models/sendcloud-shipment";
 export * from "./services";
-export { default as SendCloudFulfillmentProvider } from "./providers/sendcloud-fulfillment";

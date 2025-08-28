@@ -133,3 +133,7 @@ const shipments = await sendCloudService.getShipmentByOrderId("order_123");
 ## License
 
 MIT
+
+ npx medusa plugin:build
+yalc update @medita/medusa-sendcloud-plugin
+npx medusa plugin:add @medita/medusa-sendcloud-plugin

@@ -9,7 +9,7 @@ import {
   CreateShippingOptionDTO,
   CalculatedShippingOptionPrice
 } from "@medusajs/framework/types";
-import SendCloudApiService, { SendCloudConfig, SendCloudParcel } from "../services/sendcloud-api-service";
+import SendCloudApiService, { SendCloudConfig, SendCloudParcel } from "../../modules/sendcloud/services/sendcloud-api-service";
 
 interface SendCloudFulfillmentOptions {
   apiKey: string;
@@ -18,38 +18,89 @@ interface SendCloudFulfillmentOptions {
   partnerId?: string;
 }
 
+type InjectedDependencies = {
+  logger: Logger;
+}
+
 class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   static identifier = "sendcloud-fulfillment";
   
+  // Add static block to log when class is loaded
+  static {
+    console.log("🌟 [STATIC] SendCloudFulfillmentProvider class loaded with identifier:", this.identifier);
+  }
+  
+  protected logger_: Logger;
   protected options_: SendCloudFulfillmentOptions;
   protected sendCloudApi_: SendCloudApiService;
-  protected logger_: Logger;
 
-  constructor(container: any, options: SendCloudFulfillmentOptions) {
+  constructor({ logger }: InjectedDependencies, options: SendCloudFulfillmentOptions) {
     super();
     
-    this.options_ = options;
-    this.logger_ = container.logger || console; // Use container logger or fallback
+    console.log("🚀🚀🚀 [CONSTRUCTOR] SendCloud provider constructor called!");
+    console.log("🚀🚀🚀 [CONSTRUCTOR] Logger exists:", !!logger);
+    console.log("🚀🚀🚀 [CONSTRUCTOR] Options:", JSON.stringify(options, null, 2));
     
-    // Initialize SendCloud API service
-    this.sendCloudApi_ = new SendCloudApiService({
-      apiKey: options.apiKey,
-      apiSecret: options.apiSecret,
-      baseUrl: options.baseUrl,
-      partnerId: options.partnerId,
-    }, this.logger_);
+    this.logger_ = logger;
+    this.options_ = options;
+    
+    // Log initialization
+    this.logger_.info("SendCloud Fulfillment Provider initializing with identifier: " + SendCloudFulfillmentProvider.identifier);
+    
+    try {
+      // Initialize SendCloud API service
+      this.sendCloudApi_ = new SendCloudApiService({
+        apiKey: options.apiKey,
+        apiSecret: options.apiSecret,
+        baseUrl: options.baseUrl,
+        partnerId: options.partnerId,
+      }, this.logger_);
+      
+      console.log("🚀🚀🚀 [CONSTRUCTOR] API service initialized successfully");
+      this.logger_.info("SendCloud Fulfillment Provider initialized successfully");
+    } catch (error) {
+      console.error("🚀🚀🚀 [CONSTRUCTOR] Error initializing API service:", error);
+      this.logger_.error("Error initializing SendCloud API service: " + error);
+      throw error;
+    }
   }
 
   async getFulfillmentOptions(): Promise<FulfillmentOption[]> {
+    console.log("🔥 [getFulfillmentOptions] Called");
+    this.logger_.info("🔥 [getFulfillmentOptions] Called via logger");
     try {
+      console.log("🔥 [getFulfillmentOptions] Fetching shipping methods from SendCloud...");
+      this.logger_.info("🔥 [getFulfillmentOptions] Fetching shipping methods from SendCloud...");
       const shippingMethods = await this.sendCloudApi_.getShippingMethods();
-      return (shippingMethods.shipping_methods || []).map((method: any) => ({
+      // Log basic info about the response without full details
+      console.log("🔥 [getFulfillmentOptions] Shipping methods keys:", Object.keys(shippingMethods || {}));
+      console.log("🔥 [getFulfillmentOptions] Shipping methods array length:", shippingMethods?.shipping_methods?.length);
+      
+      if (!shippingMethods || !shippingMethods.shipping_methods) {
+        console.log("🔥 [getFulfillmentOptions] No shipping methods found in response");
+        return [];
+      }
+      
+      const options = (shippingMethods.shipping_methods || []).map((method: any) => ({
         id: method.id.toString(),
         name: method.name,
         carrier: method.carrier?.name,
         data: method
       }));
+      
+      // Show only basic summary to reduce log clutter
+      const summary = options.slice(0, 3).map(option => ({
+        id: option.id,
+        name: option.name,
+        carrier: option.carrier
+      }));
+      console.log("🔥 [getFulfillmentOptions] Summary (first 3):", JSON.stringify(summary, null, 2));
+      console.log(`🔥 [getFulfillmentOptions] Total: ${options.length} shipping methods`);
+      this.logger_.info("🔥 [getFulfillmentOptions] Mapped options count: " + options.length);
+      return options;
     } catch (error) {
+      console.error("🔥 [getFulfillmentOptions] ERROR:", error);
+      this.logger_.error("🔥 [getFulfillmentOptions] ERROR: " + error);
       throw new MedusaError(
         MedusaError.Types.UNEXPECTED_STATE,
         "Failed to retrieve shipping options from SendCloud"
@@ -58,13 +109,17 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
   }
 
   async validateOption(data: Record<string, unknown>): Promise<boolean> {
+    console.log("🔥 [validateOption] Called with data:", data);
+    this.logger_.info("🔥 [validateOption] Called");
     try {
       const shippingMethods = await this.sendCloudApi_.getShippingMethods();
       const isValid = shippingMethods.shipping_methods?.some(
         (method: any) => method.id == data.id
       );
+      console.log("🔥 [validateOption] Result:", isValid);
       return Boolean(isValid);
     } catch (error: any) {
+      console.error("🔥 [validateOption] ERROR:", error);
       this.logger_.error("Failed to validate SendCloud shipping option: " + JSON.stringify({ 
         message: error?.message,
         data 
@@ -352,6 +407,30 @@ class SendCloudFulfillmentProvider extends AbstractFulfillmentProviderService {
       MedusaError.Types.NOT_ALLOWED,
       `Document retrieval not implemented for type: ${documentType}`
     );
+  }
+
+  async createReturnFulfillment(
+    fulfillment: Record<string, unknown>
+  ): Promise<CreateFulfillmentResult> {
+    try {
+      // For returns, we'll use the existing createReturn method
+      // This method should handle return fulfillment creation
+      const returnResult = await this.createReturn(fulfillment);
+      
+      return {
+        data: returnResult,
+        labels: []
+      };
+    } catch (error: any) {
+      this.logger_.error("Failed to create SendCloud return fulfillment: " + JSON.stringify({ 
+        message: error?.message,
+        fulfillment_id: fulfillment.id 
+      }));
+      throw new MedusaError(
+        MedusaError.Types.UNEXPECTED_STATE,
+        `Failed to create SendCloud return fulfillment: ${error?.message || 'Unknown error'}`
+      );
+    }
   }
 
   async getFulfillmentDocuments(data: Record<string, unknown>): Promise<any> {

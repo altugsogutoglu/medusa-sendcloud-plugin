@@ -123,7 +123,7 @@ const SendCloudShipments = () => {
         <div className="p-6 flex justify-between items-center border-b">
           <div>
             <Heading className="font-sans font-medium h1-core">
-              SendCloud Shipments
+              SendCloud Shipm26262ents
             </Heading>
             <Text className="text-ui-fg-subtle">
               Manage and track your SendCloud shipments

@@ -9,7 +9,8 @@
       "WebSearch",
       "WebFetch(domain:docs.medusajs.com)",
       "Bash(yarn build)",
-      "Bash(npx @medusajs/cli plugin:build:*)"
+      "Bash(npx @medusajs/cli plugin:build:*)",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []
