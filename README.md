@@ -20,7 +20,13 @@ A comprehensive SendCloud integration plugin for MedusaJS v2.9.0 that provides s
 - Enhanced type safety with Zod validation
 - Streamlined plugin architecture without loaders
 
+
 ## Installation
+
+Install from npm:
+```bash
+yarn add @medita/medusa-sendcloud-plugin
+```
 
 ### Local Development
 
