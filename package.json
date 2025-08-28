@@ -1,6 +1,6 @@
 {
   "name": "@medita/medusa-sendcloud-plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SendCloud integration plugin for Medusa v2.9.0",
   "main": ".medusa/server/src/index.js",
   "author": "Altug Sogutoglu <altugsogutoglu@github.com>",
